@@ -10,17 +10,17 @@
   <meta name="theme-color" content="#07111f">
   <meta name="color-scheme" content="dark">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="SlyTalk — Programming Language">
+  <meta property="og:title" content="SlyTalk - Programming Language">
   <meta property="og:description" content="A programming language under active development.">
   <meta property="og:url" content="https://slytalk.org/">
   <meta property="og:image" content="./assets/slytalk-logo.svg">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="SlyTalk — Programming Language">
+  <meta name="twitter:title" content="SlyTalk - Programming Language">
   <meta name="twitter:description" content="A programming language under active development.">
   <link rel="canonical" href="https://slytalk.org/">
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
   <meta name="author" content="SlyTalk Project">
-  <title>SlyTalk — Programming Language</title>
+  <title>SlyTalk - Programming Language</title>
   <style>
     :root {
       color-scheme: dark;
@@ -31,51 +31,597 @@
       --muted: #a5b4c8;
       --accent: #7cb8ff;
       --accent-soft: rgba(124, 184, 255, .10);
+      --amber: #f59e0b;
+      --amber-soft: rgba(245, 158, 11, .14);
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
     }
+
     * { box-sizing: border-box; }
     html { min-height: 100%; background: var(--bg); }
+
     body {
-      min-height: 100vh; margin: 0; padding: 32px 24px 22px;
-      display: flex; flex-direction: column; color: var(--text);
-      background: radial-gradient(ellipse at 50% 0%, rgba(42, 89, 145, .18), transparent 52%), var(--bg);
-      font-family: var(--sans); line-height: 1.65;
+      min-height: 100vh;
+      margin: 0;
+      padding: 40px 24px 32px;
+      display: flex;
+      flex-direction: column;
+      color: var(--text);
+      /* Subtle blueprint grid + original radial glow */
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse at 50% 0%, rgba(42, 89, 145, .24), transparent 55%),
+        linear-gradient(rgba(32, 49, 73, 0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(32, 49, 73, 0.25) 1px, transparent 1px);
+      background-size: 100% 100%, 44px 44px, 44px 44px;
+      font-family: var(--sans);
+      line-height: 1.65;
+      position: relative;
+      overflow-x: hidden;
     }
-    .container { width: 100%; max-width: 780px; margin: auto; }
-    .brand { display: flex; justify-content: center; margin: 0 auto 32px; }
-    .brand img { display: block; width: min(100%, 230px); height: auto; max-height: 210px; object-fit: contain; }
+
+    /* Animated Top & Bottom Hazard Tapes */
+    .hazard-ribbon {
+      position: fixed;
+      left: 0;
+      right: 0;
+      height: 8px;
+      z-index: 50;
+      background: repeating-linear-gradient(
+        -45deg,
+        #f59e0b,
+        #f59e0b 14px,
+        #07111f 14px,
+        #07111f 28px
+      );
+      background-size: 39.6px 39.6px;
+      animation: moveHazard 1.4s linear infinite;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+    }
+    .hazard-top { top: 0; border-bottom: 1px solid rgba(245, 158, 11, 0.45); }
+    .hazard-bottom { bottom: 0; border-top: 1px solid rgba(245, 158, 11, 0.45); }
+
+    @keyframes moveHazard {
+      0% { background-position: 0 0; }
+      100% { background-position: 39.6px 0; }
+    }
+
+    /* Interactive Welding Sparks Canvas */
+    #sparksCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 40;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 780px;
+      margin: auto;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Construction Rig + Brand Logo Scene */
+    .construction-stage {
+      position: relative;
+      width: min(100%, 380px);
+      margin: 0 auto 30px;
+      padding-top: 38px;
+      padding-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      user-select: none;
+    }
+
+    /* Overhead Crane Jib */
+    .crane-jib {
+      position: absolute;
+      top: 0;
+      left: 10px;
+      right: 10px;
+      height: 14px;
+      border: 2px solid var(--amber);
+      border-radius: 4px;
+      background:
+        repeating-linear-gradient(60deg, transparent, transparent 8px, rgba(245,158,11,0.45) 8px, rgba(245,158,11,0.45) 10px),
+        repeating-linear-gradient(-60deg, transparent, transparent 8px, rgba(245,158,11,0.45) 8px, rgba(245,158,11,0.45) 10px),
+        rgba(245, 158, 11, 0.08);
+      box-shadow: 0 4px 18px rgba(245, 158, 11, 0.15);
+      z-index: 20;
+    }
+
+    /* Warning Beacons on Crane Ends */
+    .beacon {
+      position: absolute;
+      top: -8px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--amber);
+      animation: beaconFlash 1.1s ease-in-out infinite;
+    }
+    .beacon-left { left: 8px; }
+    .beacon-right { right: 8px; animation-delay: 0.55s; }
+
+    @keyframes beaconFlash {
+      0%, 100% { opacity: 1; box-shadow: 0 0 12px #f59e0b, 0 0 24px #f59e0b; }
+      50% { opacity: 0.25; box-shadow: 0 0 2px #f59e0b; }
+    }
+
+    /* Side Scaffolding Pillars */
+    .scaffold-pillar {
+      position: absolute;
+      top: 14px;
+      bottom: 10px;
+      width: 10px;
+      border-left: 2px solid rgba(245, 158, 11, 0.45);
+      border-right: 2px solid rgba(245, 158, 11, 0.45);
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 7px,
+        rgba(245, 158, 11, 0.3) 7px,
+        rgba(245, 158, 11, 0.3) 9px
+      );
+      pointer-events: none;
+    }
+    .scaffold-left { left: 22px; }
+    .scaffold-right { right: 22px; }
+
+    /* Moving Crane Trolley + Cable + Hook */
+    .crane-trolley {
+      position: absolute;
+      top: 13px;
+      left: 50%;
+      margin-left: -20px;
+      width: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 25;
+      animation: trolleyMove 5.6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .trolley-car {
+      width: 34px;
+      height: 8px;
+      background: var(--amber);
+      border-radius: 2px;
+      border: 1px solid #07111f;
+    }
+    .trolley-cable {
+      width: 2px;
+      background: linear-gradient(to bottom, var(--amber), #7cb8ff);
+      animation: cableHoist 5.6s ease-in-out infinite;
+    }
+    .trolley-hook {
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--amber);
+      color: #07111f;
+      font: 700 9px/1.2 var(--mono);
+      letter-spacing: .04em;
+      box-shadow: 0 2px 10px rgba(245, 158, 11, 0.4);
+      white-space: nowrap;
+    }
+
+    @keyframes trolleyMove {
+      0%, 100% { transform: translateX(-68px); }
+      50% { transform: translateX(68px); }
+    }
+    @keyframes cableHoist {
+      0%, 100% { height: 14px; }
+      50% { height: 34px; }
+    }
+
+    /* Rotating Construction Gears Behind Logo */
+    .gear {
+      position: absolute;
+      color: rgba(124, 184, 255, 0.16);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .gear-left {
+      width: 64px;
+      height: 64px;
+      left: 42px;
+      bottom: 28px;
+      color: rgba(245, 158, 11, 0.22);
+      animation: spinGear 11s linear infinite;
+    }
+    .gear-right {
+      width: 54px;
+      height: 54px;
+      right: 44px;
+      top: 48px;
+      animation: spinGearRev 8s linear infinite;
+    }
+
+    @keyframes spinGear {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes spinGearRev {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    /* Brand Logo Container with Laser Scanline */
+    .brand {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
+      padding: 12px;
+      border-radius: 28px;
+      cursor: pointer;
+      z-index: 10;
+      transition: transform .2s ease;
+    }
+    .brand:hover {
+      transform: scale(1.03);
+    }
+    .brand img, .brand .fallback-logo {
+      display: block;
+      width: min(100%, 215px);
+      height: auto;
+      max-height: 205px;
+      object-fit: contain;
+      border-radius: 24px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(124, 184, 255, 0.22);
+    }
+
+    /* Scanning Verification Beam Over Logo */
+    .laser-beam {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--amber), #7cb8ff, var(--amber), transparent);
+      box-shadow: 0 0 12px var(--amber);
+      animation: scanLogo 3.4s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 15;
+    }
+
+    @keyframes scanLogo {
+      0%, 100% { top: 14%; opacity: 0.2; }
+      50% { top: 86%; opacity: 0.95; }
+    }
+
+    /* Bottom Scaffolding Bar Under Logo */
+    .scaffold-base {
+      width: 78%;
+      height: 8px;
+      margin-top: 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 158, 11, 0.55);
+      background: repeating-linear-gradient(
+        -45deg,
+        #f59e0b,
+        #f59e0b 10px,
+        #0c1929 10px,
+        #0c1929 20px
+      );
+      background-size: 28.28px 28.28px;
+      animation: moveHazard 1.2s linear infinite;
+    }
+
+    /* Status Pill */
+    .status-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
     .status {
-      display: inline-flex; align-items: center; gap: 9px; margin-bottom: 18px;
-      padding: 6px 12px; border: 1px solid rgba(124,184,255,.3);
-      border-radius: 999px; color: var(--accent); background: var(--accent-soft);
-      font: 12px/1.5 var(--mono); letter-spacing: .01em;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 6px 13px;
+      border: 1px solid rgba(124,184,255,.32);
+      border-radius: 999px;
+      color: var(--accent);
+      background: var(--accent-soft);
+      font: 12px/1.5 var(--mono);
+      letter-spacing: .01em;
     }
-    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px rgba(124,184,255,.55); }
-    h1 { margin: 0 0 12px; font-size: clamp(2rem, 6vw, 2.8rem); line-height: 1.12; letter-spacing: -.045em; }
-    .lead { max-width: 660px; margin: 0; color: var(--muted); font-size: clamp(1rem, 2.5vw, 1.13rem); }
-    .card { margin-top: 32px; padding: 24px; border: 1px solid var(--border); border-radius: 14px; background: rgba(12,25,41,.86); }
-    .card-header { margin-bottom: 17px; padding-bottom: 11px; border-bottom: 1px solid var(--border); color: var(--muted); font: 12px/1.5 var(--mono); letter-spacing: .09em; text-transform: uppercase; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
-    .slot { min-height: 106px; padding: 16px; border: 1px solid var(--border); border-radius: 10px; background: rgba(255,255,255,.015); }
-    .slot-title { margin-bottom: 5px; font-weight: 650; }
-    .slot-desc { color: var(--muted); font: 12px/1.6 var(--mono); }
-    .links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
-    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; border: 1px solid #304762; border-radius: 8px; color: var(--text); background: #0c1929; font: 13px/1.4 var(--mono); text-decoration: none; transition: border-color .15s ease, transform .15s ease; }
-    .btn:hover, .btn:focus-visible { border-color: var(--accent); outline: none; }
+    .construction-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 12px;
+      border: 1px solid rgba(245, 158, 11, .42);
+      border-radius: 999px;
+      color: #fbbf24;
+      background: var(--amber-soft);
+      font: 600 12px/1.5 var(--mono);
+      letter-spacing: .02em;
+      cursor: pointer;
+    }
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(124,184,255,.75);
+      animation: pulseDot 1.8s ease-in-out infinite;
+    }
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.55; }
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 6vw, 2.8rem);
+      line-height: 1.12;
+      letter-spacing: -.045em;
+    }
+    .lead {
+      max-width: 660px;
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 2.5vw, 1.13rem);
+    }
+
+    /* Project Status Card */
+    .card {
+      margin-top: 32px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(12,25,41,.88);
+      backdrop-filter: blur(8px);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: repeating-linear-gradient(
+        -45deg,
+        #f59e0b,
+        #f59e0b 12px,
+        #203149 12px,
+        #203149 24px
+      );
+      background-size: 33.94px 33.94px;
+      animation: moveHazard 1.6s linear infinite;
+    }
+
+    .card-header {
+      margin: 0 0 17px;
+      padding-bottom: 11px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font: 12px/1.5 var(--mono);
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .live-activity {
+      color: #fbbf24;
+      font-size: 11px;
+      letter-spacing: .04em;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+    }
+    .slot {
+      min-height: 120px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(255,255,255,.018);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color .2s ease, transform .2s ease;
+    }
+    .slot:hover {
+      border-color: rgba(245, 158, 11, 0.5);
+      transform: translateY(-2px);
+    }
+    .slot-title {
+      margin-bottom: 5px;
+      font-weight: 650;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .slot-desc {
+      color: var(--muted);
+      font: 12px/1.6 var(--mono);
+      margin-bottom: 12px;
+    }
+
+    /* Animated Construction Progress Bar inside each Slot */
+    .slot-bar {
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .slot-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background-image: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.28) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.28) 50%,
+        rgba(255, 255, 255, 0.28) 75%,
+        transparent 75%,
+        transparent
+      );
+      background-size: 20px 20px;
+      animation: moveStripes 0.9s linear infinite;
+    }
+    .fill-amber { width: 78%; background-color: #f59e0b; }
+    .fill-blue { width: 64%; background-color: #7cb8ff; }
+    .fill-muted { width: 32%; background-color: #64748b; }
+
+    @keyframes moveStripes {
+      0% { background-position: 0 0; }
+      100% { background-position: 20px 0; }
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 15px;
+      border: 1px solid #304762;
+      border-radius: 8px;
+      color: var(--text);
+      background: #0c1929;
+      font: 13px/1.4 var(--mono);
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+    }
+    .btn:hover, .btn:focus-visible {
+      border-color: var(--accent);
+      box-shadow: 0 0 16px rgba(124, 184, 255, 0.15);
+      outline: none;
+    }
+    .btn-sparks {
+      border-color: rgba(245, 158, 11, 0.45);
+      color: #fbbf24;
+    }
+    .btn-sparks:hover {
+      border-color: var(--amber);
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.22);
+    }
     .btn:active { transform: translateY(1px); }
-    footer { width: 100%; max-width: 780px; margin: 38px auto 0; padding-top: 16px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 18px; color: var(--muted); font-size: 12px; }
-    @media (max-width: 520px) { body { padding: 26px 17px 18px; } .brand { margin-bottom: 25px; } .card { padding: 17px; } footer { flex-direction: column; } }
-    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+
+    footer {
+      width: 100%;
+      max-width: 780px;
+      margin: 38px auto 0;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      color: var(--muted);
+      font-size: 12px;
+      position: relative;
+      z-index: 10;
+    }
+
+    @media (max-width: 520px) {
+      body { padding: 32px 17px 26px; }
+      .construction-stage { margin-bottom: 22px; }
+      .card { padding: 17px; }
+      .card-header { flex-direction: column; align-items: flex-start; gap: 4px; }
+      footer { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
   </style>
 </head>
 <body>
+  <!-- Animated Construction Hazard Tapes -->
+  <div class="hazard-ribbon hazard-top" aria-hidden="true"></div>
+  <div class="hazard-ribbon hazard-bottom" aria-hidden="true"></div>
+
+  <!-- Interactive Welding Sparks Overlay -->
+  <canvas id="sparksCanvas" aria-hidden="true"></canvas>
+
   <main class="container">
-    <div class="brand">
-      <img src="./assets/slytalk-logo.svg" alt="SlyTalk" width="230" height="225">
+    <!-- Animated Construction Rig Around ./assets/slytalk-logo.svg -->
+    <div class="construction-stage">
+      <div class="crane-jib" aria-hidden="true">
+        <span class="beacon beacon-left"></span>
+        <span class="beacon beacon-right"></span>
+      </div>
+
+      <div class="scaffold-pillar scaffold-left" aria-hidden="true"></div>
+      <div class="scaffold-pillar scaffold-right" aria-hidden="true"></div>
+
+      <div class="crane-trolley" aria-hidden="true">
+        <div class="trolley-car"></div>
+        <div class="trolley-cable"></div>
+        <div class="trolley-hook" id="weldOrigin">🚧 BUILDING</div>
+      </div>
+
+      <!-- Rotating Engineering Gears -->
+      <svg class="gear gear-left" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+      </svg>
+      <svg class="gear gear-right" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+      </svg>
+
+      <!-- Official Logo Image + Inline Fallback for Local Preview -->
+      <div class="brand" onclick="burstWeldSparks(event)" title="Click to trigger welding sparks">
+        <div class="laser-beam" aria-hidden="true"></div>
+        <img
+          src="./assets/slytalk-logo.svg"
+          alt="SlyTalk"
+          width="230"
+          height="225"
+          style="padding: 32px;"
+          onerror="this.style.display='none'; document.getElementById('fallbackLogo').style.display='block';"
+        >
+        <svg id="fallbackLogo" class="fallback-logo" style="display:none;" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SlyTalk">
+          <rect width="200" height="200" rx="42" fill="#07162c"/>
+          <path d="M68 62 C95 36, 125 35, 138 43 C112 48, 88 58, 68 62 Z" fill="#ffffff"/>
+          <path d="M45 92 C72 58, 108 48, 132 52 C98 63, 72 80, 45 92 Z" fill="#ffffff"/>
+          <path d="M42 125 C58 95, 84 74, 112 65 C84 85, 68 110, 42 125 Z" fill="#ffffff"/>
+          <path d="M32 152 C52 138, 65 112, 85 95 C72 124, 62 146, 32 152 Z" fill="#ffffff"/>
+          <path d="M138 34 L134 52 L149 44 L142 62 C152 72, 158 88, 168 106 C172 114, 170 124, 163 129 C155 133, 146 130, 141 122 C133 115, 122 108, 114 108 C122 128, 128 154, 115 178 C110 156, 98 136, 98 110 C98 92, 108 78, 118 70 C102 78, 86 105, 88 138 C90 154, 96 168, 92 178 C78 164, 68 148, 56 155 C72 135, 76 108, 92 84 C105 64, 122 50, 138 34 Z" fill="#ffffff"/>
+          <path d="M130 68 C136 72, 141 76, 139 79 C134 78, 131 74, 130 68 Z" fill="#07162c"/>
+          <path d="M156 108 C159 111, 160 116, 157 119 C154 117, 154 112, 156 108 Z" fill="#07162c"/>
+          <path d="M116 95 C128 96, 138 104, 145 115 C135 109, 124 103, 116 95 Z" fill="#07162c"/>
+        </svg>
+      </div>
+
+      <div class="scaffold-base" aria-hidden="true"></div>
     </div>
 
-    <div class="status"><span class="dot" aria-hidden="true"></span><span>Website in preparation · Pre-release development</span></div>
+    <div class="status-row">
+      <div class="status">
+        <span class="dot" aria-hidden="true"></span>
+        <span>Website in preparation · Pre-release development</span>
+      </div>
+      <div class="construction-badge" onclick="burstWeldSparks(event)">
+        <span aria-hidden="true">🚧</span>
+        <span>Active Construction Zone</span>
+      </div>
+    </div>
+
     <h1>A language is taking shape.</h1>
     <p class="lead">
       SlyTalk is a programming language written in Rust, designed around readable syntax,
@@ -84,23 +630,55 @@
     </p>
 
     <section class="card" aria-labelledby="status-heading">
-      <h2 class="card-header" id="status-heading">Project status</h2>
+      <h2 class="card-header" id="status-heading">
+        <span>Project status</span>
+        <span class="live-activity" id="liveStage">⚙️ ACTIVE WORK: COMPILER &amp; RUNTIME</span>
+      </h2>
       <div class="grid">
         <div class="slot">
-          <div class="slot-title">Language design</div>
-          <div class="slot-desc">Being refined alongside the core implementation.</div>
+          <div>
+            <div class="slot-title">
+              <span>Language design</span>
+              <span aria-hidden="true">📐</span>
+            </div>
+            <div class="slot-desc">Being refined alongside the core implementation.</div>
+          </div>
+          <div class="slot-bar" aria-hidden="true">
+            <div class="slot-bar-fill fill-amber"></div>
+          </div>
         </div>
         <div class="slot">
-          <div class="slot-title">Compiler and runtime</div>
-          <div class="slot-desc">Under active implementation and verification.</div>
+          <div>
+            <div class="slot-title">
+              <span>Compiler and runtime</span>
+              <span aria-hidden="true">⚙️</span>
+            </div>
+            <div class="slot-desc">Under active implementation and verification.</div>
+          </div>
+          <div class="slot-bar" aria-hidden="true">
+            <div class="slot-bar-fill fill-blue"></div>
+          </div>
         </div>
         <div class="slot">
-          <div class="slot-title">Public documentation</div>
-          <div class="slot-desc">Planned for a future public milestone.</div>
+          <div>
+            <div class="slot-title">
+              <span>Public documentation</span>
+              <span aria-hidden="true">🚧</span>
+            </div>
+            <div class="slot-desc">Planned for a future public milestone.</div>
+          </div>
+          <div class="slot-bar" aria-hidden="true">
+            <div class="slot-bar-fill fill-muted"></div>
+          </div>
         </div>
       </div>
       <div class="links">
-        <a class="btn" href="https://github.com/slytalk-lang" target="_blank" rel="noopener noreferrer">GitHub organization <span aria-hidden="true">↗</span></a>
+        <a class="btn" href="https://github.com/slytalk-lang" target="_blank" rel="noopener noreferrer">
+          GitHub organization <span aria-hidden="true">↗</span>
+        </a>
+        <button type="button" class="btn btn-sparks" onclick="burstWeldSparks(event)">
+          ⚡ Weld sparks
+        </button>
       </div>
     </section>
   </main>
@@ -109,8 +687,104 @@
     <span>© <span id="year">2026</span> SlyTalk Project</span>
     <span>Pre-release development · Not yet a public release</span>
   </footer>
+
   <script>
     document.getElementById('year').textContent = String(new Date().getFullYear());
+
+    // Rotate subtle engineering status indicator
+    const stages = [
+      "⚙️ ACTIVE WORK: COMPILER & RUNTIME",
+      "📐 ACTIVE WORK: LANGUAGE DESIGN",
+      "🔍 ACTIVE WORK: VERIFICATION PIPELINE",
+      "🚧 MILESTONE GATES IN PROGRESS"
+    ];
+    let stageIdx = 0;
+    setInterval(() => {
+      stageIdx = (stageIdx + 1) % stages.length;
+      const el = document.getElementById('liveStage');
+      if (el) el.textContent = stages[stageIdx];
+    }, 3000);
+
+    // Welding Sparks Canvas Engine
+    const canvas = document.getElementById('sparksCanvas');
+    const ctx = canvas.getContext('2d');
+    let sparks = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function createSparks(x, y, count = 24) {
+      const palette = ['#fbbf24', '#f59e0b', '#7cb8ff', '#fef08a', '#ffffff'];
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1.4 + Math.random() * 5.8;
+        sparks.push({
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 1.8,
+          gravity: 0.2,
+          alpha: 1,
+          decay: 0.018 + Math.random() * 0.022,
+          size: 1.4 + Math.random() * 1.8,
+          color: palette[Math.floor(Math.random() * palette.length)]
+        });
+      }
+    }
+
+    function burstWeldSparks(e) {
+      const x = (e && e.clientX) ? e.clientX : window.innerWidth / 2;
+      const y = (e && e.clientY) ? e.clientY : window.innerHeight / 3;
+      createSparks(x, y, 32);
+    }
+
+    // Periodic welding sparks dropping from the crane hook over the SlyTalk logo
+    setInterval(() => {
+      const hook = document.getElementById('weldOrigin');
+      if (hook) {
+        const rect = hook.getBoundingClientRect();
+        createSparks(rect.left + rect.width / 2, rect.bottom, 12);
+      }
+    }, 2300);
+
+    function animateSparks() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = sparks.length - 1; i >= 0; i--) {
+        const p = sparks[i];
+        p.vx *= 0.98;
+        p.vy += p.gravity;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0) {
+          sparks.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = p.size;
+        ctx.lineCap = 'round';
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = p.color;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x - p.vx * 1.5, p.y - p.vy * 1.5);
+        ctx.stroke();
+        ctx.restore();
+      }
+      requestAnimationFrame(animateSparks);
+    }
+
+    window.onload = function () {
+      animateSparks();
+    };
   </script>
 </body>
 </html>
