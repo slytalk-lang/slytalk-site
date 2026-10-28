@@ -1,0 +1,4 @@
+# The site uses noindex meta tags while it is in preparation.
+# Keep crawling allowed so search engines can see those directives.
+User-agent: *
+Allow: /

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
+  <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet">
+  <meta name="description" content="SlyTalk is a programming language under active development. The public website and documentation are not available yet.">
+  <meta name="theme-color" content="#07111f">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="SlyTalk — Programming Language">
+  <meta property="og:description" content="A programming language under active development.">
+  <meta property="og:url" content="https://slytalk.org/">
+  <meta property="og:image" content="./assets/slytalk-logo.svg">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="SlyTalk — Programming Language">
+  <meta name="twitter:description" content="A programming language under active development.">
+  <link rel="canonical" href="https://slytalk.org/">
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+  <meta name="author" content="SlyTalk Project">
+  <title>SlyTalk — Programming Language</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07111f;
+      --panel: #0c1929;
+      --border: #203149;
+      --text: #edf4ff;
+      --muted: #a5b4c8;
+      --accent: #7cb8ff;
+      --accent-soft: rgba(124, 184, 255, .10);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { min-height: 100%; background: var(--bg); }
+    body {
+      min-height: 100vh; margin: 0; padding: 32px 24px 22px;
+      display: flex; flex-direction: column; color: var(--text);
+      background: radial-gradient(ellipse at 50% 0%, rgba(42, 89, 145, .18), transparent 52%), var(--bg);
+      font-family: var(--sans); line-height: 1.65;
+    }
+    .container { width: 100%; max-width: 780px; margin: auto; }
+    .brand { display: flex; justify-content: center; margin: 0 auto 32px; }
+    .brand img { display: block; width: min(100%, 230px); height: auto; max-height: 210px; object-fit: contain; }
+    .status {
+      display: inline-flex; align-items: center; gap: 9px; margin-bottom: 18px;
+      padding: 6px 12px; border: 1px solid rgba(124,184,255,.3);
+      border-radius: 999px; color: var(--accent); background: var(--accent-soft);
+      font: 12px/1.5 var(--mono); letter-spacing: .01em;
+    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px rgba(124,184,255,.55); }
+    h1 { margin: 0 0 12px; font-size: clamp(2rem, 6vw, 2.8rem); line-height: 1.12; letter-spacing: -.045em; }
+    .lead { max-width: 660px; margin: 0; color: var(--muted); font-size: clamp(1rem, 2.5vw, 1.13rem); }
+    .card { margin-top: 32px; padding: 24px; border: 1px solid var(--border); border-radius: 14px; background: rgba(12,25,41,.86); }
+    .card-header { margin-bottom: 17px; padding-bottom: 11px; border-bottom: 1px solid var(--border); color: var(--muted); font: 12px/1.5 var(--mono); letter-spacing: .09em; text-transform: uppercase; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+    .slot { min-height: 106px; padding: 16px; border: 1px solid var(--border); border-radius: 10px; background: rgba(255,255,255,.015); }
+    .slot-title { margin-bottom: 5px; font-weight: 650; }
+    .slot-desc { color: var(--muted); font: 12px/1.6 var(--mono); }
+    .links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; border: 1px solid #304762; border-radius: 8px; color: var(--text); background: #0c1929; font: 13px/1.4 var(--mono); text-decoration: none; transition: border-color .15s ease, transform .15s ease; }
+    .btn:hover, .btn:focus-visible { border-color: var(--accent); outline: none; }
+    .btn:active { transform: translateY(1px); }
+    footer { width: 100%; max-width: 780px; margin: 38px auto 0; padding-top: 16px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 18px; color: var(--muted); font-size: 12px; }
+    @media (max-width: 520px) { body { padding: 26px 17px 18px; } .brand { margin-bottom: 25px; } .card { padding: 17px; } footer { flex-direction: column; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <div class="brand">
+      <img src="./assets/slytalk-logo.svg" alt="SlyTalk" width="230" height="225">
+    </div>
+
+    <div class="status"><span class="dot" aria-hidden="true"></span><span>Website in preparation · Pre-release development</span></div>
+    <h1>A language is taking shape.</h1>
+    <p class="lead">
+      SlyTalk is a programming language written in Rust, designed around readable syntax,
+      explicit capability boundaries, and predictable execution. The language is still under
+      active development; its public documentation and release information will arrive when they are ready.
+    </p>
+
+    <section class="card" aria-labelledby="status-heading">
+      <h2 class="card-header" id="status-heading">Project status</h2>
+      <div class="grid">
+        <div class="slot">
+          <div class="slot-title">Language design</div>
+          <div class="slot-desc">Being refined alongside the core implementation.</div>
+        </div>
+        <div class="slot">
+          <div class="slot-title">Compiler and runtime</div>
+          <div class="slot-desc">Under active implementation and verification.</div>
+        </div>
+        <div class="slot">
+          <div class="slot-title">Public documentation</div>
+          <div class="slot-desc">Planned for a future public milestone.</div>
+        </div>
+      </div>
+      <div class="links">
+        <a class="btn" href="https://github.com/slytalk-lang" target="_blank" rel="noopener noreferrer">GitHub organization <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>© <span id="year">2026</span> SlyTalk Project</span>
+    <span>Pre-release development · Not yet a public release</span>
+  </footer>
+  <script>
+    document.getElementById('year').textContent = String(new Date().getFullYear());
+  </script>
+</body>
+</html>
